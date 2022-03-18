@@ -9,6 +9,8 @@
 #include <functional>
 #include <iostream>
 
+#define LOG {std::cout << "IN LINE " << __LINE__ << " OF FILE " << __FILE__ << std::endl;}
+
 namespace fm {
 
     template<typename T>
@@ -369,6 +371,36 @@ namespace fm {
     
     namespace ode {
 
+        struct RKF45_COEF
+        {
+            std::vector<double> A, CH, CT;
+            std::vector<std::vector<double>> B;
+            RKF45_COEF(const std::vector<double>& A, const std::vector<double>& CH, const std::vector<std::vector<double>>& B, const std::vector<double>& CT) : A(A), CH(CH), CT(CT), B(B) { }
+
+        };
+        
+        RKF45_COEF RKF45_F1({0.0,2.0/9.0,1.0/3.0,3.0/4.0,1.0,5.0/6.0},{47.0/450.0,0.0,12.0/25.0,32.0/225.0,1.0/30.0,6.0/25.0},{{0.0,0.0,0.0,0.0,0.0},
+                                                                                    {2.0/9.0,0.0,0.0,0.0,0.0},
+                                                                                    {1.0/12.0,1.0/4.0,0.0,0.0,0.0},
+                                                                                    {69.0/128.0,-243.0/128.0,135.0/64.0,0.0,0.0},
+                                                                                    {-17.0/12.0,27.0/4.0,-27.0/5.0,16.0/15.0,0.0},
+                                                                                    {65.0/432.0,-5.0/16.0,13.0/16.0,4.0/27.0,5.0/144.0}},{-1.0/150.0,3.0/100.0,-16.0/75.0,-1.0/20.0,6.0/25.0});
+
+        RKF45_COEF RKF45_F2({0.0,1.0/4.0,3.0/8.0,12.0/13.0,1.0,1.0/2.0},{16.0/135.0,0.0,6656.0/12825.0,28561.0/56430.0,-9.0/50.0,2.0/55.0},{{0.0,0.0,0.0,0.0,0.0},
+                                                                                                 {1.0/4.0,0.0,0.0,0.0,0.0},
+                                                                                                 {3.0/32.0,9.0/32.0,0.0,0.0,0.0},
+                                                                                                 {1932.0/2197.0,-7200.0/2197.0,7296.0/2197.0,0.0,0.0},
+                                                                                                 {439.0/216.0,-8.0,3680.0/513.0,-845.0/4104.0,0.0},
+                                                                                                 {-8.0/27.0,2.0,-3544.0/2565.0,1859.0/4104.0,-11/40.0}},{1.0/360.0,0.0,-128.0/4275.0,-2197.0/75240.0,1.0/50.0,2.0/55.0});                                                                  
+
+        RKF45_COEF RKF45_SARA({0.0,1.0/2.0,1.0/2.0,1.0,2.0/3.0,1.0/5.0},{1.0/24.0,0.0,0.0,5.0/48.0,27.0/56.0,125.0/336.0},{{0.0,0.0,0.0,0.0,0.0},
+                                                                                  {1.0/2.0,0.0,0.0,0.0,0.0},
+                                                                                  {1.0/4.0,1.0/4.0,0.0,0.0,0.0},
+                                                                                  {0.0,-1.0,2.0,0.0,0.0},
+                                                                                  {7.0/27.0,10.0/27.0,0.0,1.0/27.0,0.0},
+                                                                                  {28.0/625.0,-1.0/5.0,546.0/625.0,54.0/625.0,-378.0/625.0}},{-1.0/8.0,0.0,-2.0/3.0,-1.0/16.0,27.0/56.0,125.0/336.0});
+
+    
         #define STEP_PARAMS const function_tV<T>& f, const double& t, const T& y, const double& dt
 
         template<typename T>
@@ -403,6 +435,23 @@ namespace fm {
             k4 = f(t+dt, y + k3*dt);
 
             return y + (k1+2*k2+2*k3+k4)*(dt/6);
+        }
+
+        template<typename T>
+        T RKF45(STEP_PARAMS, double& TE, const RKF45_COEF& COEFF = RKF45_F1)
+        {
+            T k1,k2,k3,k4,k5,k6;
+
+            k1 = dt * f(t+COEFF.A[0]*dt,y);
+            k2 = dt * f(t+COEFF.A[1]*dt,y+COEFF.B[1][0]*k1);
+            k3 = dt * f(t+COEFF.A[2]*dt,y+COEFF.B[2][0]*k1+COEFF.B[2][1]*k2);
+            k4 = dt * f(t+COEFF.A[3]*dt,y+COEFF.B[3][0]*k1+COEFF.B[3][1]*k2+COEFF.B[3][2]*k3);
+            k5 = dt * f(t+COEFF.A[4]*dt,y+COEFF.B[4][0]*k1+COEFF.B[4][1]*k2+COEFF.B[4][2]*k3+COEFF.B[4][3]*k4);
+            k6 = dt * f(t+COEFF.A[5]*dt,y+COEFF.B[5][0]*k1+COEFF.B[5][1]*k2+COEFF.B[5][2]*k3+COEFF.B[5][3]*k4+COEFF.B[5][4]*k5);
+
+            TE = std::abs(COEFF.CT[0]*k1 + COEFF.CT[1]*k2 + COEFF.CT[2]*k3 + COEFF.CT[3]*k4 + COEFF.CT[4]*k5 + COEFF.CT[5]*k6);
+            return y + COEFF.CH[0]*k1 + COEFF.CH[1]*k2 + COEFF.CH[2]*k3 + COEFF.CH[3]*k4 + COEFF.CH[4]*k5 + COEFF.CH[5]*k6;
+
         }
 
         /*
@@ -440,6 +489,44 @@ namespace fm {
 
                 save_count = (save_count+1)%opts.save_step;
                 t += opts.dt;
+            }while(opts.end(res.back().first, res.back().second) || save_count);
+           
+            std::cout << "Done." << std::endl;
+
+            return res;
+        }
+
+        template<typename T>
+        struct ODEsolve_optRKF {
+            double dt = 1e-3, epson = 1e-4;
+            uint64_t save_step = 1;
+            endCond<T> end = [](const double& t, const T&){ return t <= 10; };
+            RKF45_COEF opts = RKF45_F1;
+
+        };
+
+        template<typename T>
+        pair_tV<T> ODEsolveCT(const function_tV<T>& f, const double& t0, const T& y0, const ODEsolve_optRKF<T>& opts = ODEsolve_optRKF<T>())
+        {
+            pair_tV<T> res;            
+            double t = t0, TE, dt = opts.dt;
+            T y = y0, y_aux;
+            uint64_t save_count = 0;
+
+            std::cout << "Starting integration . . ." << std::endl;
+            do{
+                if(!save_count){
+                    res.emplace_back(t, y);
+                }
+
+                do
+                {
+                    y_aux = RKF45(f, t, y, dt, TE, opts.opts);
+                    dt = 0.9 * opts.dt * std::pow(opts.epson/TE,1/5);
+                } while (TE > opts.epson);
+                y = y_aux;
+                save_count = (save_count+1)%opts.save_step;
+                t += dt;
             }while(opts.end(res.back().first, res.back().second) || save_count);
            
             std::cout << "Done." << std::endl;

@@ -1,6 +1,6 @@
 TARGET = exe
 CC = g++
-LIBS = -lm -lsfml-graphics -lsfml-window -lsfml-system
+LIBS = -lm -lboost_filesystem -lboost_iostreams -lboost_system
 HEAD = ./include
 SRCS = ./source
 INCDIR = -I$(HEAD)
