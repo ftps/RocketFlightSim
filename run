@@ -1,0 +1,16 @@
+#!/bin/bash
+
+TARGET="./exe"
+
+if [ -f "$TARGET" ]; then
+    rm $TARGET
+fi
+
+echo -e "Compiling . . .\n"
+make
+
+if [ -f "$TARGET" ]; then
+    echo -e "\nRunning . . .\n"
+    time $TARGET
+    echo -e "\nDone."
+fi
