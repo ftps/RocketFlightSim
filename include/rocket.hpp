@@ -1,14 +1,15 @@
 #ifndef ROCKET_HPP
 #define ROCKET_HPP
 
-#include <vector>
+#include "f_maths.hpp"
 
 class Rocket
 {
 public: 
 
     // State Variables
-    std::vector<double> X,Q,L,P; //Position, Quartenion, Angular and Linear momentum
+    fm::Vector3D X,L,P; //Position, Angular and Linear momentum
+    fm::Quat Q; //Quartenion
 
 
     Rocket();

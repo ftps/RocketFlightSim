@@ -1,8 +1,5 @@
-#include <iostream>
 #include "gnuplot-iostream.hpp"
-#include "f_maths.hpp"
-#include <vector>
-
+#include "rocket.hpp"
 
 double F(const double& t, const double& x)
 {

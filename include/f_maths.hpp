@@ -63,7 +63,7 @@ namespace fm {
     }
 
     // cross vxv
-    Vector3D cross(const Vector3D& l, const Vector3D& r)
+    inline Vector3D cross(const Vector3D& l, const Vector3D& r)
     {
         Vector3D res;
 
@@ -428,21 +428,21 @@ namespace fm {
 
         };
         
-        RKF45_COEF RKF45_F1({0.0,2.0/9.0,1.0/3.0,3.0/4.0,1.0,5.0/6.0},{47.0/450.0,0.0,12.0/25.0,32.0/225.0,1.0/30.0,6.0/25.0},{{0.0,0.0,0.0,0.0,0.0},
+        inline RKF45_COEF RKF45_F1({0.0,2.0/9.0,1.0/3.0,3.0/4.0,1.0,5.0/6.0},{47.0/450.0,0.0,12.0/25.0,32.0/225.0,1.0/30.0,6.0/25.0},{{0.0,0.0,0.0,0.0,0.0},
                                                                                     {2.0/9.0,0.0,0.0,0.0,0.0},
                                                                                     {1.0/12.0,1.0/4.0,0.0,0.0,0.0},
                                                                                     {69.0/128.0,-243.0/128.0,135.0/64.0,0.0,0.0},
                                                                                     {-17.0/12.0,27.0/4.0,-27.0/5.0,16.0/15.0,0.0},
                                                                                     {65.0/432.0,-5.0/16.0,13.0/16.0,4.0/27.0,5.0/144.0}},{-1.0/150.0,3.0/100.0,-16.0/75.0,-1.0/20.0,6.0/25.0});
 
-        RKF45_COEF RKF45_F2({0.0,1.0/4.0,3.0/8.0,12.0/13.0,1.0,1.0/2.0},{16.0/135.0,0.0,6656.0/12825.0,28561.0/56430.0,-9.0/50.0,2.0/55.0},{{0.0,0.0,0.0,0.0,0.0},
+        inline RKF45_COEF RKF45_F2({0.0,1.0/4.0,3.0/8.0,12.0/13.0,1.0,1.0/2.0},{16.0/135.0,0.0,6656.0/12825.0,28561.0/56430.0,-9.0/50.0,2.0/55.0},{{0.0,0.0,0.0,0.0,0.0},
                                                                                                  {1.0/4.0,0.0,0.0,0.0,0.0},
                                                                                                  {3.0/32.0,9.0/32.0,0.0,0.0,0.0},
                                                                                                  {1932.0/2197.0,-7200.0/2197.0,7296.0/2197.0,0.0,0.0},
                                                                                                  {439.0/216.0,-8.0,3680.0/513.0,-845.0/4104.0,0.0},
                                                                                                  {-8.0/27.0,2.0,-3544.0/2565.0,1859.0/4104.0,-11/40.0}},{1.0/360.0,0.0,-128.0/4275.0,-2197.0/75240.0,1.0/50.0,2.0/55.0});                                                                  
 
-        RKF45_COEF RKF45_SARA({0.0,1.0/2.0,1.0/2.0,1.0,2.0/3.0,1.0/5.0},{1.0/24.0,0.0,0.0,5.0/48.0,27.0/56.0,125.0/336.0},{{0.0,0.0,0.0,0.0,0.0},
+        inline RKF45_COEF RKF45_SARA({0.0,1.0/2.0,1.0/2.0,1.0,2.0/3.0,1.0/5.0},{1.0/24.0,0.0,0.0,5.0/48.0,27.0/56.0,125.0/336.0},{{0.0,0.0,0.0,0.0,0.0},
                                                                                   {1.0/2.0,0.0,0.0,0.0,0.0},
                                                                                   {1.0/4.0,1.0/4.0,0.0,0.0,0.0},
                                                                                   {0.0,-1.0,2.0,0.0,0.0},
@@ -456,13 +456,13 @@ namespace fm {
         using ODE_step = std::function<T(const function_tV<T>&, const double&, const T&, const double&)>;
 
         template<typename T>
-        T EulerExp(STEP_PARAMS)
+        inline T EulerExp(STEP_PARAMS)
         {
             return y + f(t, y)*dt;
         }
 
         template<typename T>
-        T RK2(STEP_PARAMS)
+        inline T RK2(STEP_PARAMS)
         {
             T k1, k2;
 
@@ -473,7 +473,7 @@ namespace fm {
         }
 
         template<typename T>
-        T RK4(STEP_PARAMS)
+        inline T RK4(STEP_PARAMS)
         {
             T k1, k2, k3, k4;
             double dt2 = dt/2;
@@ -487,7 +487,7 @@ namespace fm {
         }
 
         template<typename T>
-        T RKF45(STEP_PARAMS, double& TE, const RKF45_COEF& COEFF = RKF45_F1)
+        inline T RKF45(STEP_PARAMS, double& TE, const RKF45_COEF& COEFF = RKF45_F1)
         {
             T k1,k2,k3,k4,k5,k6;
 
@@ -521,7 +521,7 @@ namespace fm {
 
         // main ODE solver
         template<typename T>
-        pair_tV<T> ODEsolve(const function_tV<T>& f, const double& t0, const T& y0, const ODEsolve_opt<T>& opts = ODEsolve_opt<T>())
+        inline pair_tV<T> ODEsolve(const function_tV<T>& f, const double& t0, const T& y0, const ODEsolve_opt<T>& opts = ODEsolve_opt<T>())
         {
             pair_tV<T> res;            
             double t = t0;
@@ -555,7 +555,7 @@ namespace fm {
         };
 
         template<typename T>
-        pair_tV<T> ODEsolveCT(const function_tV<T>& f, const double& t0, const T& y0, const ODEsolve_optRKF<T>& opts = ODEsolve_optRKF<T>())
+        inline pair_tV<T> ODEsolveCT(const function_tV<T>& f, const double& t0, const T& y0, const ODEsolve_optRKF<T>& opts = ODEsolve_optRKF<T>())
         {
             pair_tV<T> res;            
             double t = t0, TE, dt = opts.dt;
@@ -592,7 +592,7 @@ namespace fm {
         */
 
         template<typename T>
-        void Leapfrog(T& x, T& v, const function_V<T>& a, const double& dt)
+        inline void Leapfrog(T& x, T& v, const function_V<T>& a, const double& dt)
         {
             T ax = a(x);
             x += v*dt + ax*(0.5*sq(dt));
@@ -603,7 +603,7 @@ namespace fm {
         //using function_V = std::function<T(const T&)>;
         // std::vector<double>
         template<typename T, typename U>
-        void Leapfrog(T& x, T& v, const U& a, const double& dt, T& a2)
+        inline void Leapfrog(T& x, T& v, const U& a, const double& dt, T& a2)
         {
             T ax = a2;
             x += v*dt + ax*(0.5*sq(dt));
@@ -622,7 +622,7 @@ namespace fm {
         Forward Riemann Sum integration
         */
 
-        double RS_ForD(const pairXY& data)
+        inline double RS_ForD(const pairXY& data)
         {
             double res = 0;
 
@@ -633,7 +633,7 @@ namespace fm {
             return res;
         }
 
-        double RS_ForF(const func_RR& f, const XY& ep, const int& N)
+        inline double RS_ForF(const func_RR& f, const XY& ep, const int& N)
         {
             double dt = (ep.second - ep.first)/(N-1);
             double res = 0;
@@ -650,7 +650,7 @@ namespace fm {
         Backwards Riemann Sum integration
         */
 
-        double RS_BackD(const pairXY& data)
+        inline double RS_BackD(const pairXY& data)
         {
             double res = 0;
 
@@ -661,7 +661,7 @@ namespace fm {
             return res;
         }
 
-        double RS_BackF(const func_RR& f, const XY& ep, const int& N)
+        inline double RS_BackF(const func_RR& f, const XY& ep, const int& N)
         {
             double dt = (ep.second - ep.first)/(N-1);
             double res = 0;
@@ -678,7 +678,7 @@ namespace fm {
         Trapezoid Rule integration
         */
 
-        double TrapD(const pairXY& data)
+        inline double TrapD(const pairXY& data)
         {
             double res = 0;
 
@@ -689,7 +689,7 @@ namespace fm {
             return res;
         }
 
-        double TrapF(const func_RR& f, const XY& ep, const int& N)
+        inline double TrapF(const func_RR& f, const XY& ep, const int& N)
         {
             double dt = (ep.second - ep.first)/(N-1);
             double res = 0.5*f(ep.first);
@@ -706,7 +706,7 @@ namespace fm {
         Simpson's rule integration
         */
 
-        double SimpsonD(const pairXY& data)
+        inline double SimpsonD(const pairXY& data)
         {
             double res = 0;
             double h2, h21;
@@ -734,7 +734,7 @@ namespace fm {
             return res;
         }
 
-        double SimpsonF(const func_RR& f, const XY& ep, const int& N)
+        inline double SimpsonF(const func_RR& f, const XY& ep, const int& N)
         {
             double dt = (ep.second - ep.first)/(N-1);
             double res = 0.5*f(ep.first);
@@ -751,12 +751,12 @@ namespace fm {
         Main integrator functions
         */
 
-        double integrate(const pairXY& data, const funcInt_data& f = TrapD)
+        inline double integrate(const pairXY& data, const funcInt_data& f = TrapD)
         {
             return f(data);
         }
 
-        double integrate(const func_RR& f, const XY& ep, const int& N, const funcInt_func& ff = TrapF)
+        inline double integrate(const func_RR& f, const XY& ep, const int& N, const funcInt_func& ff = TrapF)
         {
             return ff(f, ep, N);
         }
