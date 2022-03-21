@@ -132,6 +132,55 @@ namespace fm {
         }
         return std::pow(res, 1/q);
     }
+
+    class Quat {
+        private:
+            double s;
+            Vector3D v;
+        public:
+            Quat() : s(0), v({0,0,0}) { }
+            Quat(const double& s, const Vector3D& v) : s(s), v(v) { }
+            
+            double& operator[](const uint& i)
+            {
+                return ((i == 0) ? s : v[i-1]);
+            }
+
+            double operator[](const uint& i) const
+            {
+                return ((i == 0) ? s : v[i-1]);
+            }
+
+            Vector3D& getV() //AAAAAAAAAAAAAAAAAAAAAAAAAA
+            {
+                return v;
+            }
+
+            Vector3D getV() const //AAAAAAAAAAAAAAAAAAAAAAAAAA
+            {
+                return v;
+            }
+
+            Matrix33 quat2rot()
+            {
+                Matrix33 R;
+                double ss = 2/(sq(s) + mod2V(v));
+
+                R[0][0] = 1 - ss*(sq(v[1]) + sq(v[2]));
+                R[0][1] = ss*(v[0]*v[1] - v[2]*s);
+                R[0][2] = ss*(v[0]*v[2] + v[1]*s);
+
+                R[1][0] = ss*(v[0]*v[1] + v[2]*s);
+                R[1][1] = 1 - ss*(sq(v[2]) + sq(v[0]));
+                R[1][2] = ss*(v[1]*v[2] - v[0]*s);
+
+                R[2][0] = ss*(v[0]*v[2] - v[1]*s);
+                R[2][1] = ss*(v[1]*v[2] + v[0]*s);
+                R[2][2] = 1 - ss*(sq(v[1]) + sq(v[0]));
+
+                return R;
+            }
+    };
 };
 
 /*
