@@ -810,7 +810,6 @@ namespace fm {
                     if (i != j)
                     {
                         prod = prod * (x - xData.at(j)) / (xData.at(i) - xData.at(j));
-                        std::cout<< prod << '\n';
                     }                    
                 }
                 sum = sum + prod * yData.at(i);
