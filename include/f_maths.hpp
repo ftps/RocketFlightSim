@@ -762,6 +762,63 @@ namespace fm {
         }
 
     };
+
+
+    namespace interp{
+
+        template<typename T>
+        inline double interp1D(const T& xData, const T& yData,  const double& x)
+        {
+            int i = 1;
+            
+            
+            if(x == xData.at(0))
+            {
+                i = 1;               
+            }
+            else if(x == xData.at(xData.size() - 1))
+            {
+                i = xData.size() - 1;                
+            }
+            else
+            {  
+                while (x >= xData.at(i))
+                {           
+                    ++i;
+                }
+            }
+            
+            std::cout << i << '\t' <<x <<'\n';
+            double x0 = xData.at(i - 1), x1 = xData.at(i), y0 = yData.at(i - 1), y1 = yData.at(i), div;
+            
+            div = (y1 - y0) / (x1 - x0);
+
+            return y0 + div * (x - x0);
+
+        }
+
+        template<typename T>
+        inline double polyInterp(const T& xData, const T& yData, const double& x)
+        {
+            double prod, sum = 0;
+
+            for (size_t i = 0; i < xData.size(); i++)
+            {
+                prod = 1;
+                for (size_t j = 0; j < xData.size(); j++)
+                {
+                    if (i != j)
+                    {
+                        prod = prod * (x - xData.at(j)) / (xData.at(i) - xData.at(j));
+                        std::cout<< prod << '\n';
+                    }                    
+                }
+                sum = sum + prod * yData.at(i);
+            }
+            
+            return sum;
+        }
+    };
 };
 
 #endif
