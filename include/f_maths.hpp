@@ -787,8 +787,6 @@ namespace fm {
                     ++i;
                 }
             }
-            
-            std::cout << i << '\t' <<x <<'\n';
             double x0 = xData.at(i - 1), x1 = xData.at(i), y0 = yData.at(i - 1), y1 = yData.at(i), div;
             
             div = (y1 - y0) / (x1 - x0);
