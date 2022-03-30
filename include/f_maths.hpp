@@ -114,6 +114,7 @@ namespace fm {
                 return res;
             }
     };
+    
 
     using Matrix22 = Matrix<2,2,double>;
     using Matrix33 = Matrix<3,3,double>;
@@ -131,6 +132,28 @@ namespace fm {
             res += std::pow(aux, q/p);
         }
         return std::pow(res, 1/q);
+    }
+
+    template<std::size_t N,typename T>
+    inline Matrix<N,N,T> eye()
+    {
+        Matrix<N,N,T> M;
+        for (size_t i = 0; i < N; i++)
+        {
+            M.at(i).at(i) = 1.0;
+        }
+        return M;
+    }
+
+    template<std::size_t N,typename T>
+    inline Matrix<N,N,T> diag(const fm::Vector<T,N>& v)
+    {
+        Matrix<N,N,T> M;
+        for (size_t i = 0; i < N; i++)
+        {
+            M.at(i).at(i) = v.at(i);
+        }
+        return M;
     }
 
     class Quat {
