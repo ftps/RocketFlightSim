@@ -52,10 +52,7 @@ int main(int argc, char* argv[])
 //    std::cout << "\nInterpolated data:\n";
 //    for ( size_t i = 0; i < xVals.size(); i++ ) std::cout SP xVals[i] SP yVals[i] NL;
 
-    RocketSim sim;
-
-    sim.timeMassThrustDragInput("Dados_Simulacao_Preliminar.csv");
-
+    Rocket sim("rocket.txt");
 
     return 0;
 }

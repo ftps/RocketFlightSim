@@ -103,6 +103,16 @@ namespace fm {
                 return res;
             }
 
+            Matrix<N1,N2,T> operator+=(const Matrix<N1,N2,T>& r)
+            {
+                for(std::size_t i = 0; i < N1; ++i){
+                    for(std::size_t j = 0; j < N2; ++j){
+                        v[i][j] += r[i][j];
+                    }
+                }
+                return *this;
+            }
+
             Matrix<N1,N2,T> operator-(const Matrix<N1,N2,T>& r)
             {
                 Matrix<N1,N2,T> res;
@@ -112,6 +122,16 @@ namespace fm {
                     }
                 }
                 return res;
+            }
+
+            Matrix<N1,N2,T> operator-=(const Matrix<N1,N2,T>& r)
+            {
+                for(std::size_t i = 0; i < N1; ++i){
+                    for(std::size_t j = 0; j < N2; ++j){
+                        v[i][j] -= r[i][j];
+                    }
+                }
+                return *this;
             }
     };
     
@@ -140,7 +160,7 @@ namespace fm {
         Matrix<N,N,T> M;
         for (size_t i = 0; i < N; i++)
         {
-            M.at(i).at(i) = 1.0;
+            M[i].at(i) = 1.0;
         }
         return M;
     }
@@ -151,7 +171,7 @@ namespace fm {
         Matrix<N,N,T> M;
         for (size_t i = 0; i < N; i++)
         {
-            M.at(i).at(i) = v.at(i);
+            M[i].at(i) = v.at(i);
         }
         return M;
     }

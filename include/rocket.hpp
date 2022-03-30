@@ -7,6 +7,15 @@
 #include <fstream>
 #include <string>
 
+enum Comp{cone = 0, body = 1, motor = 2};
+struct Component {
+    double L, R, M, Xcm;
+    uint type;
+
+    Component(const std::string& aux_s, const double& Xtip, const uint& type);
+    fm::Matrix33 momInertia();
+};
+
 class Rocket
 {
 public: 
@@ -16,25 +25,27 @@ public:
     fm::Quat Q; //Quartenion
 
     // Geometry Variables
-    double noseConeLength, noseConeRadius, noseConeMass;
-    double tubeLength, tubeRadius;
+    double Xrb, Rrb, Arb, ncant, rf, Xf, Xcm, Xcm_body, Xcm_motor;
+    uint nfin;
+    std::vector<Component> comp;
 
     // Physics Variables
-    fm::Matrix33 inerciaTensor;
+    fm::Matrix33 iTensorBody, iTensorMotor;
+    double massBody, massMotor;
     std::vector<double> time, mass, thrust, drag;
 
 public:
-
+    Rocket(const std::string& filename);
     void timeMassThrustDragInput(const std::string& filename);
 
     // Inercia calculation methods. Cada componente assume ser um cilindro com peso.
-    void noseConeInercia(const double& noseConeLength,const double& noseConeRadius, const double& noseConeMass);
-    void componentInercia(const double& componentLength,const double& componentRadius, const double& componentMass); 
+    fm::Matrix33 noseConeInercia(const double& noseConeLength,const double& noseConeRadius, const double& noseConeMass);
+    fm::Matrix33 componentInercia(const double& componentLength,const double& componentRadius, const double& componentMass); 
 
     Rocket();
 
 };
 
-
+std::vector<std::string> spltString(const std::string& s, const char& cc = ' ');
 
 #endif
