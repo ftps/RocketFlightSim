@@ -859,6 +859,28 @@ namespace fm {
             return sum;
         }
     };
+
+    namespace finite{
+        template<typename T>
+        std::vector<T> fin2order(const std::vector<T>& x, const std::vector<T>& y)
+        {
+            std::vector<T>& res(x.size());
+            double h1, h2 = x.at(1) - x.at(0);
+
+            // First order forward difference
+            res.at(0) = (y.at(1) - y.at(0))/h2;
+            // Second order general central difference
+            for(uint i = 1; i < x.size()-1; ++i){
+                h1 = h2;
+                h2 = x.at(i+1) - x.at(i);
+                res.at(i) = (sq(h1)*y.at(i+1) - (sq(h1) - sq(h2))*y.at(i) - sq(h2)*y.at(i-1))/(h1*h2*(h1+h2));
+            }
+            // First order backward difference
+            res.back() = (y.back() - y.at(y.size()-2))/h2;
+
+            return res;
+        }
+    };
 };
 
 #endif

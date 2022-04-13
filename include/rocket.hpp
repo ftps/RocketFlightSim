@@ -26,13 +26,17 @@ public:
 
     // Geometry Variables
     double Xrb, Rrb, Arb, ncant, rf, Xf, Xcm, Xcm_body, Xcm_motor;
+    double lcc2, lcn2;
     uint nfin;
     std::vector<Component> comp;
 
     // Physics Variables
     fm::Matrix33 iTensorBody, iTensorMotor;
     double massBody, massMotor;
-    std::vector<double> time, mass, thrust, drag;
+    std::vector<double> time, mass, thrust, drag, dmdt;
+
+    // Coefficients
+    double Cda, CA = 0, CN = 0, CR = 2*M_PI; // CR is for a flat plane
 
 public:
     Rocket(const std::string& filename);
