@@ -48,6 +48,7 @@ Rocket::Rocket(const std::string& filename)
 		// while is a comment
 	}while(aux_s.find("#") != std::string::npos);
 	timeMassThrustDragInput(aux_s);
+	dmdt = fm::finite::fin2order(time, mass);
 	
 	// get number of components
 	do{
@@ -61,6 +62,7 @@ Rocket::Rocket(const std::string& filename)
 
 	Xrb = 0;
 	Arb = 0;
+	massBody = 0;
 	for(uint i = 0; i < n_c; ++i){
 		std::getline(fp, aux_s);
 		// check if comment
@@ -72,14 +74,20 @@ Rocket::Rocket(const std::string& filename)
 		// Nose cone moment of inertia
 		if(i == 0){
 			comp.emplace_back(Component(aux_s, Xrb, cone));
+			massBody += comp.back().M;
 			iTensorBody = comp.back().momInertia();
 		} // Initial motor moment of inertia
 		else if(i == n_c-1){
 			comp.emplace_back(Component(aux_s, Xrb, motor));
 			iTensorMotor = comp.back().momInertia();
+			for(double& m : mass){
+				m -= massBody;
+			}
+			comp.back().M = mass.at(0);
 		} // Other components moment of inertia, cylinder
 		else{
 			comp.emplace_back(Component(aux_s, Xrb, body));
+			massBody += comp.back().M;
 			iTensorBody += comp.back().momInertia();
 		}
 
@@ -93,10 +101,17 @@ Rocket::Rocket(const std::string& filename)
 	std::cout << "Motor Initial Inertia:\n" << iTensorMotor << std::endl;
 	std::cout << "Total Inertia:\n" << iTensorMotor + iTensorBody << std::endl;
 
-	Xcm = 0;
 	Xcm_body = 0;
-	Xcm_motor = 0;
-	// calculate Xcm of the two groups
+	Xcm_motor = comp.back().Xcm;;
+	Aux = 0;
+	// calculate Xcm of the body
+	for(uint i = 0; i < n_c-1; ++i){
+		Xcm_body += comp[i].Xcm*comp[i].M;
+		Aux += comp[i].M;
+	}
+	Xcm_body /= Aux;
+	// calculate initial Xcm of the whole rocket
+	Xcm = (Xcm_body*massBody + Xcm_motor*massMotor)/(massBody + massMotor);
 
 	// get fin data
 	do{
@@ -112,7 +127,10 @@ Rocket::Rocket(const std::string& filename)
 		}
 	}while(true);
 
-	std::cout << nfin << " " << ncant << " " << rf << " " << Xf << "\n";
+	// thrust damping values
+	lcn2 = fm::sq(Xrb - Xcm);
+	lcc2 = fm::sq(Xcm - Xcm_motor);
+	Cda = dmdt.at(0)*(lcn2 - lcc2);
 
 }
 

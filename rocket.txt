@@ -1,7 +1,10 @@
 # penis
 Dados_Simulacao_Preliminar.csv
+# number of components
 3
+# length radius mass
 0.4 0.075 2
 1.0 0.075 10
 0.6 0.075 10
+# nrFin cantAngle rf Xf
 4 0.0 0.09 1.75
