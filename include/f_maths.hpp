@@ -864,7 +864,7 @@ namespace fm {
         template<typename T>
         std::vector<T> fin2order(const std::vector<T>& x, const std::vector<T>& y)
         {
-            std::vector<T>& res(x.size());
+            std::vector<T> res(x.size());
             double h1, h2 = x.at(1) - x.at(0);
 
             // First order forward difference
