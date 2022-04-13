@@ -39,7 +39,7 @@ Rocket::Rocket(const std::string& filename)
 	std::string aux_s;
 	std::vector<double> aux_v;
 	std::vector<std::string> aux_vs;
-	uint n_c;
+	uint n_c; // Numero de compomentes
 	double Aux;
 
 	// get csv file
